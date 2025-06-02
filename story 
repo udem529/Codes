@@ -1,112 +1,53 @@
-Story 1: Validate Data Consistency & Integrate Queues/Roles Flow
+ Jira Story 1: Validate Frontend & Backend Data Consistency
 
-Title: Validate backend vs frontend data and integrate Queues and Roles flow into main dashboard
+Summary: Validate and align frontend, backend, and sample sheet data.
 
-User Story:
+Description / Comment:
 
-> As a data analyst, I want to validate that the backend and frontend data are aligned, and integrate the Queues and Roles logic into the main dashboard flow, so that users get accurate insights and seamless access based on their roles.
+> I have validated the frontend and backend data, and they are consistent. However, the sample sheet data is not matching.
 
+Additionally, I have worked on integrating the Queues and Roles flow, which will be added to the main data flow in the next update.
 
-
-Description:
-
-Verified backend data and frontend data — confirmed they are matching.
-
-Identified mismatch in Sample Sheet data, which needs to be corrected.
-
-Developed Queues and Roles flow logic.
-
-Plan to integrate this logic into the main Tableau flow/dashboard.
-
-
-Acceptance Criteria:
-
-[ ] Backend and frontend data confirmed to match.
-
-[ ] Sample Sheet mismatch documented and communicated.
-
-[ ] Queues and Roles logic added to the main data flow.
-
-[ ] Dashboard respects role-based logic.
 
 
 
 ---
 
-✅ Story 2: Build Calculated Fields for Exempt Grievance Analysis
+✅ Jira Story 2: Create Calculated Fields on Dashboard
 
-Title: Create calculated fields for Grievance-Exempt case analysis in dashboard
+Summary: Add calculated fields for dashboard enhancements
 
-User Story:
+Description / Comment:
 
-> As a dashboard developer, I want to add calculated fields to analyze exempt grievance cases in Tableau, so that we can distinguish overlapping and unique subject/category cases.
+> I have added the following calculated fields in the dashboard for metric computation:
 
-
-
-Description: Created the following calculated fields in Tableau:
-
-1. Subject is Grievance-Exempt
+% of Exempt Grievance Cases:
 
 
-2. Category is Exempt Grievance
+COUNTD(IF [CATG_DESC] = "Exempt Grievance" THEN [ISSC_ID] END) / COUNTD([ISSC_ID])
+
+% of Grievance-Exempt Subjects:
 
 
-3. Only Subject is Grievance-Exempt
+COUNTD(IF [SUBJ_DRSC] = "Grievance-Exempt" THEN [ISSC_ID] END) / COUNTD([ISSC_ID])
+
+Overlap Count (Both Subject and Category are Exempt):
 
 
-4. Only Category is Exempt Grievance
+COUNTD(IF [SUBJ_DRSC] = "Grievance-Exempt" AND [CATG_DESC] = "Exempt Grievance" THEN [ISSC_ID] END)
 
-
-5. Both Subject and Category are Exempt
-
-
-6. One Exempt Only (No Overlap)
-
-
-
-These fields are used to provide detailed breakdowns via tooltips and KPIs.
-
-Acceptance Criteria:
-
-[ ] All fields created in Tableau and documented.
-
-[ ] Fields return expected results with sample data.
-
-[ ] Tooltip and visual breakdowns updated with these fields.
-
-[ ] Any null/missing value scenarios handled.
 
 
 
 ---
 
-✅ Story 3: Share LOB-Level Query
+✅ Jira Story 3: Share LOB Query
 
-Title: Provide Line of Business (LOB) query for team usage
+Summary: Share LOB-level query for further analysis
 
-User Story:
+Description / Comment:
 
-> As a data contributor, I want to share the LOB query with the team, so that they can reuse it in other reports and dashboards as needed.
-
-
-
-Description:
-
-The LOB-level query has been developed to extract and analyze data by line of business.
-
-Will be shared with the team through Confluence/Slack/Email.
-
-
-Acceptance Criteria:
-
-[ ] Query shared with team.
-
-[ ] Team confirms it runs successfully.
-
-[ ] Any feedback or improvements are documented and discussed.
+> I will be sharing the LOB query shortly for your reference. It includes logic for line-of-business level segmentation and can be used for breakdowns in the dashboard.
 
 
 
----
-
-Let me know if you want these converted to subtasks, or if you'd like a fourth story for dashboard testing or deployment.
