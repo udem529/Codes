@@ -49,3 +49,24 @@ KPI	Description
 Escalated Exempt Cases	% of exempt cases that later escalated to formal appeal or regulatory complaint.
 Audit Failures (Exempt)	Number or % of exempt cases failing internal QA checks.
 % Exempt Cases with Member Callbacks	Member called again after exempt case closed—possible indicator of unresolved issues.
+
+
+
+
+
+
+
+📌 Total Cases: <SUM([Number of Records]) or COUNTD([ISSC_ID])>
+
+📍 Subject Breakdown:
+- Grievance: <SUM(IF [SUBJ_DESC] = "Grievance" THEN 1 ELSE 0 END)>
+- Grievance-Exempt: <SUM(IF [SUBJ_DESC] = "Grievance-Exempt" THEN 1 ELSE 0 END)>
+- Grievance-DMHC: <SUM(IF [SUBJ_DESC] = "Grievance-DMHC" THEN 1 ELSE 0 END)>
+- Grievance-CMS: <SUM(IF [SUBJ_DESC] = "Grievance-CMS" THEN 1 ELSE 0 END)>
+
+📍 Category Breakdown:
+- Exempt Grievance: <SUM(IF [CATG_DESC] = "Exempt Grievance" THEN 1 ELSE 0 END)>
+- Rx Grievance: <SUM(IF [CATG_DESC] = "Rx Grievance" THEN 1 ELSE 0 END)>
+- Expedited Grievance Part C: <SUM(IF [CATG_DESC] = "Expedited Grievance Part C" THEN 1 ELSE 0 END)>
+- CS: <SUM(IF [CATG_DESC] = "CS" THEN 1 ELSE 0 END)>
+- AGD: <SUM(IF [CATG_DESC] = "AGD" THEN 1 ELSE 0 END)>
