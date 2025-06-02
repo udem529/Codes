@@ -1,20 +1,9 @@
--- Selects the result of extracting a substring from the COMMENTS column
-SELECT
-  -- REGEXP_SUBSTR is used to extract the text "gesture of goodwill" (case-insensitive)
-  -- Parameters:
-  -- 1. COMMENTS: The column to search in
-  -- 2. 'gesture of goodwill': The regex pattern to match
-  -- 3. 1: Start search from position 1
-  -- 4. 1: Return the first match
-  -- 5. 'i': Case-insensitive search
-  REGEXP_SUBSTR(COMMENTS, 'gesture of goodwill', 1, 1, 'i') AS extracted_text
-
--- Specifies the table to retrieve data from
-FROM
-  CALL_NOTES
-
--- Filters only those rows where the COMMENTS column contains "gesture of goodwill"
--- REGEXP_LIKE checks if the pattern exists in the COMMENTS column
--- 'i' makes it case-insensitive
-WHERE
-  REGEXP_LIKE(COMMENTS, 'gesture of goodwill', 'i');
+COUNTD(
+  IF (
+      ([SUBJ_DRSC] = "Grievance-Exempt" AND [CATG_DESC] != "Exempt Grievance")
+      OR
+      ([CATG_DESC] = "Exempt Grievance" AND [SUBJ_DRSC] != "Grievance-Exempt")
+  )
+  THEN [ISSC_ID]
+  END
+)
