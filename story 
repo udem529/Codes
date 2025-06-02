@@ -1,0 +1,112 @@
+Story 1: Validate Data Consistency & Integrate Queues/Roles Flow
+
+Title: Validate backend vs frontend data and integrate Queues and Roles flow into main dashboard
+
+User Story:
+
+> As a data analyst, I want to validate that the backend and frontend data are aligned, and integrate the Queues and Roles logic into the main dashboard flow, so that users get accurate insights and seamless access based on their roles.
+
+
+
+Description:
+
+Verified backend data and frontend data — confirmed they are matching.
+
+Identified mismatch in Sample Sheet data, which needs to be corrected.
+
+Developed Queues and Roles flow logic.
+
+Plan to integrate this logic into the main Tableau flow/dashboard.
+
+
+Acceptance Criteria:
+
+[ ] Backend and frontend data confirmed to match.
+
+[ ] Sample Sheet mismatch documented and communicated.
+
+[ ] Queues and Roles logic added to the main data flow.
+
+[ ] Dashboard respects role-based logic.
+
+
+
+---
+
+✅ Story 2: Build Calculated Fields for Exempt Grievance Analysis
+
+Title: Create calculated fields for Grievance-Exempt case analysis in dashboard
+
+User Story:
+
+> As a dashboard developer, I want to add calculated fields to analyze exempt grievance cases in Tableau, so that we can distinguish overlapping and unique subject/category cases.
+
+
+
+Description: Created the following calculated fields in Tableau:
+
+1. Subject is Grievance-Exempt
+
+
+2. Category is Exempt Grievance
+
+
+3. Only Subject is Grievance-Exempt
+
+
+4. Only Category is Exempt Grievance
+
+
+5. Both Subject and Category are Exempt
+
+
+6. One Exempt Only (No Overlap)
+
+
+
+These fields are used to provide detailed breakdowns via tooltips and KPIs.
+
+Acceptance Criteria:
+
+[ ] All fields created in Tableau and documented.
+
+[ ] Fields return expected results with sample data.
+
+[ ] Tooltip and visual breakdowns updated with these fields.
+
+[ ] Any null/missing value scenarios handled.
+
+
+
+---
+
+✅ Story 3: Share LOB-Level Query
+
+Title: Provide Line of Business (LOB) query for team usage
+
+User Story:
+
+> As a data contributor, I want to share the LOB query with the team, so that they can reuse it in other reports and dashboards as needed.
+
+
+
+Description:
+
+The LOB-level query has been developed to extract and analyze data by line of business.
+
+Will be shared with the team through Confluence/Slack/Email.
+
+
+Acceptance Criteria:
+
+[ ] Query shared with team.
+
+[ ] Team confirms it runs successfully.
+
+[ ] Any feedback or improvements are documented and discussed.
+
+
+
+---
+
+Let me know if you want these converted to subtasks, or if you'd like a fourth story for dashboard testing or deployment.
