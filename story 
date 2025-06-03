@@ -1,53 +1,33 @@
- Jira Story 1: Validate Frontend & Backend Data Consistency
+Work Summary for Today:
 
-Summary: Validate and align frontend, backend, and sample sheet data.
+Updated query filter conditions at both the task and queue levels to improve data relevance.
 
-Description / Comment:
+Revised the initial wireframe to align with formatting standards used in the Inventory dashboards for consistency.
 
-> I have validated the frontend and backend data, and they are consistent. However, the sample sheet data is not matching.
+Created new calculated fields for dashboard metrics (list of specific fields to be added).
 
-Additionally, I have worked on integrating the Queues and Roles flow, which will be added to the main data flow in the next update.
+Built key KPIs, including:
 
+Total Cases
 
+Total Tasks
 
+Total Missing Zip Codes
 
----
+Cases Open for More Than 3 Days
 
-✅ Jira Story 2: Create Calculated Fields on Dashboard
-
-Summary: Add calculated fields for dashboard enhancements
-
-Description / Comment:
-
-> I have added the following calculated fields in the dashboard for metric computation:
-
-% of Exempt Grievance Cases:
+Added tooltips for better context in the view.
 
 
-COUNTD(IF [CATG_DESC] = "Exempt Grievance" THEN [ISSC_ID] END) / COUNTD([ISSC_ID])
+Developed a donut chart visualizing case status: Closed, Open, and Pending.
 
-% of Grievance-Exempt Subjects:
+Added an aging chart for open cases, with color formatting based on a 3-day threshold.
 
+Integrated a GeoMap with large bubbles highlighting counties with more than 80 cases.
 
-COUNTD(IF [SUBJ_DRSC] = "Grievance-Exempt" THEN [ISSC_ID] END) / COUNTD([ISSC_ID])
+Created queue and role-based views to display Open and Pending cases.
 
-Overlap Count (Both Subject and Category are Exempt):
-
-
-COUNTD(IF [SUBJ_DRSC] = "Grievance-Exempt" AND [CATG_DESC] = "Exempt Grievance" THEN [ISSC_ID] END)
+Implemented filters for Case Status, Subject, and Category.
 
 
-
-
----
-
-✅ Jira Story 3: Share LOB Query
-
-Summary: Share LOB-level query for further analysis
-
-Description / Comment:
-
-> I will be sharing the LOB query shortly for your reference. It includes logic for line-of-business level segmentation and can be used for breakdowns in the dashboard.
-
-
-
+Further modifications and additions will follow post-discussion and feedback.
