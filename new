@@ -1,9 +1,0 @@
-COUNTD(
-  IF (
-      ([SUBJ_DRSC] = "Grievance-Exempt" AND [CATG_DESC] != "Exempt Grievance")
-      OR
-      ([CATG_DESC] = "Exempt Grievance" AND [SUBJ_DRSC] != "Grievance-Exempt")
-  )
-  THEN [ISSC_ID]
-  END
-)
