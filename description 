@@ -1,0 +1,20 @@
+Concise Epic Summaries ( 3-liner format)
+
+Epic ID & Name	1-Line Description	1-Line Acceptance Criteria
+
+P1 – Service Recovery Analytics	Build a Medicare-wide analytics suite to pinpoint & trend negative member experiences across all service channels.	Dashboard surfaces top pain points weekly, auto-emails a monthly trend report, and tags ≥90 % of issues with a root-cause code.
+P2 – Repeat Caller Analysis	Detect members who call repeatedly for the same issue within 6 months and highlight systemic breakdowns.	Daily report flags repeat contacts with ≥95 % matching accuracy and exposes FCR (first-call resolution) lift targets.
+P3 – Medicare Call-Log Self-Service	Provide Compliance teams on-demand ODAG/CDAG call logs for audit readiness.	Portal delivers searchable call logs < 24 h after call, supports CSV export, and logs 100 % access events for audit trail.
+P4 – Grievance Scrub Oversight	Standardize reporting for vendor-handled grievance scrubbing to ensure transparency and compliance.	Daily file captures ≥98 % grievance cases, shows scrub status & SLA, and triggers alerts on any compliance breach.
+P5 – CS→Claims Appeal-Pend Report	Automate a daily feed of claim appeals pended from CS to Claims, enabling same-call resolutions.	Report lists 100 % pended cases, tracks resolution time, and displays reduction in CS→AGD hand-offs week-over-week.
+P6 – Calls ↔ Denied Claims & Utilization	Correlate denied claims and utilization events with resulting member calls to reveal cost drivers.	Model links ≥90 % calls to claim/utilization triggers, produces cost-impact summary monthly, and highlights top 5 drivers.
+P7 – Call Volume by Member Type	Compare call loads for new, renewing, and existing members to guide targeted outreach.	Tableau view ranks cohorts by call rate, refreshes monthly, and flags segments exceeding baseline by >10 %.
+P8 – Carry-Over Auth/Treatment Drivers	Analyze year-over-year calls tied to carry-over authorizations & treatments to cut repeat demand.	Report lists members with >1 repeat call, charts YoY trend, and auto-generates actions to reduce volume by 15 %.
+P9 – Verint Quality & DPA Expansion	Extend Verint to capture call-quality, voice analytics, and Decision-Process Automation metrics.	New widgets show sentiment score, DPA outcome, and allow CSV export; 100 % of calls tagged with quality score.
+P10 – Facets Inventory Reporting	Modernize Facets inventory reporting to “keep the lights on” with real-time operational visibility.	Nightly automated refresh, <1 % error rate, and user access logged for all 6 stakeholder groups.
+P11 – Pega Interaction Use-Case Reporting	Deliver standardized reports on all Pega-captured interactions for process optimization.	Ten canned reports live, data pipeline refreshes daily, and drill-down to individual case within three clicks.
+P12 – WFM Model Automation Dashboard	Auto-run Workforce-Management models and publish executive-level staffing summaries.	Model re-runs hourly, dashboard shows forecast vs. actual, and alerts any variance >5 % via Teams.
+
+
+These three-line snapshots give you the Epic ID & Name, a crisp description, and a measurable acceptance criterion for each of the 12 projects. Let me know if you need a different format (e.g., Jira CSV, Excel, or slide deck).
+
