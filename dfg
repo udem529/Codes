@@ -1,0 +1,140 @@
+/*+ LEADING(t mk me sbsp sbad_x mepr_x mepe_x mecd_act mecd_last lang_x county_x)
+    USE_NL(t me mk mepr_x mepe_x sbsp sbad_x mecd_act mecd_last cscf cssc prov)
+    MQC_ENABLE  */
+--------------------------------------------------------------------------------
+-- 1) Narrow the fact rows FIRST (group / LOB / date)
+WITH t AS (
+  SELECT /*+ MATERIALIZE */
+         c.MEME_CK,
+         c.CSSC_ID,
+         c.CSTK_SEQ_NO,
+         c.GRGR_CK,
+         c.PRPR_ID,
+         c.CSTK_RECD_DT,
+         c.CSTK_INPUT_DTM,
+         c.CSTK_FINAL_DTM,
+         c.CSTK_MCTR_SUBJ,
+         c.CSTK_MCTR_CATG,
+         c.CSTK_PRIM_USID,
+         c.CSTK_SUMMARY
+  FROM   FACETS.CMC_CSTK_TASK c
+  JOIN   FACETS.CMC_GRGR_GROUP g   ON g.GRGR_CK = c.GRGR_CK
+  JOIN   FACETS.CMC_CSCF_CONF f    ON f.CSSC_ID=c.CSSC_ID AND f.CSTK_SEQ_NO=c.CSTK_SEQ_NO AND f.CSCF_TYPE='T'
+  WHERE  g.GRGR_ID IN ('E0001001','E0001002')
+  AND    c.CSTK_RECD_DT >= TO_DATE('01-JUN-'||TO_CHAR(SYSDATE,'YYYY'),'DD-MON-YYYY')
+),
+-- 2) Keys we actually need (kept tiny)
+mk AS (
+  SELECT /*+ MATERIALIZE */ DISTINCT MEME_CK FROM t
+),
+-- 3) Trimmed lookup tables (small)
+lang_x AS (
+  SELECT /*+ MATERIALIZE */ MCTR_VALUE, MCTR_DESC
+  FROM   FACETS.CMC_MCTR_CD_TRANS
+  WHERE  MCTR_TYPE='LANG'
+),
+county_x AS (
+  SELECT /*+ MATERIALIZE */ TRIM(MCTR_VALUE) AS MCTR_VALUE, MCTR_DESC
+  FROM   FACETS.CMC_MCTR_CD_TRANS
+  WHERE  MCTR_ENTITY='MDCT' AND TRIM(MCTR_VALUE) <> '000'
+)
+--------------------------------------------------------------------------------
+SELECT
+    sbsp.SBSB_ID || '*' || me.MEME_SFX                       AS MEMBER_ID,
+    me.MEME_LAST_NAME || ', ' || me.MEME_FIRST_NAME          AS MEMBER_NAME,
+    me.MEME_MEDCD_NO                                         AS MEDICAID_NO,
+    COALESCE(mecd_act.MECD_MCTR_AIDC, mecd_last.MECD_MCTR_AIDC) AS AID_CATEGORY,
+    sbad_x.SBAD_ADDR1                                        AS MEM_ADDR,
+    sbad_x.SBAD_CITY                                         AS MEM_CITY,
+    sbad_x.SBAD_STATE                                        AS MEM_STATE,
+    sbad_x.SBAD_ZIP                                          AS MEM_ZIP,
+    COALESCE(county_x.MCTR_DESC, sbad_x.SBAD_COUNTY)         AS MEM_COUNTY,
+    me.MEME_BIRTH_DT                                         AS MEM_DOB,
+    t.PRPR_ID                                                AS PRPR_ID,
+    mepr_x.PRPR_ID                                           AS PCP_PRPR_ID,
+    t.CSTK_MCTR_SUBJ                                         AS CALL_SUBJECT,
+    t.CSTK_MCTR_CATG                                         AS CALL_CATEGORY,
+    t.CSTK_PRIM_USID                                         AS OPERATOR,
+    TO_CHAR(t.CSTK_RECD_DT,'MM/DD/YYYY')                     AS CALL_RECEIVED_DATE,
+    t.CSSC_ID                                                AS CASE_ID,
+    t.CSTK_SEQ_NO                                            AS TASK_SEQUENCE,
+    cssc.CSSC_CALLIN_METHOD                                  AS CALLIN_METHOD,
+    t.CSTK_SUMMARY                                           AS TASK_SUMMARY,
+    f.CSCF_TEXT                                              AS CS_NOTES,
+    prov.PRPR_NAME                                           AS MEDICAL_GROUP_NAME,
+    me.MEME_MCTR_LANG                                        AS MEM_PREF_LANG,
+    lang_x.MCTR_DESC                                         AS MEM_PREF_LANG_DESC,
+    t.CSTK_INPUT_DTM                                         AS CNTCT_OPEN_DTM,
+    t.CSTK_FINAL_DTM                                         AS CNTCT_CLOSED_DTM,
+    mepe_x.PDPD_ID                                           AS PDPD_ID,
+    pdds.PDDS_DESC                                           AS PDDS_DESC,
+    CURRENT_TIMESTAMP                                        AS SP_UPDT_DTTM
+FROM   t
+JOIN   FACETS.CMC_MEME_MEMBER me
+       ON me.MEME_CK = t.MEME_CK
+JOIN   mk ON mk.MEME_CK = me.MEME_CK                -- ensures we never wander
+JOIN   FACETS.CMC_SBSB_SUBSC sbsp
+       ON sbsp.SBSB_CK = me.SBSB_CK
+/* latest HOME address per subscriber */
+LEFT JOIN LATERAL (
+   SELECT /*+ INDEX(sbad SBAD_SBSBCK_TYPE_DT) */
+          sbad.SBAD_ADDR1, sbad.SBAD_CITY, sbad.SBAD_STATE, sbad.SBAD_ZIP, sbad.SBAD_COUNTY
+   FROM   FACETS.CMC_SBAD_ADDR sbad
+   WHERE  sbad.SBSB_CK = sbsp.SBSB_CK
+   AND    sbad.SBAD_TYPE = sbsp.SBAD_TYPE_HOME
+   ORDER  BY sbad.SBAD_EFF_DT DESC NULLS LAST
+   FETCH  FIRST 1 ROW ONLY
+) sbad_x ON 1=1
+/* latest PCP per member */
+LEFT JOIN LATERAL (
+   SELECT /*+ INDEX(mepr IDX_MEPR_MEME_EFF) */
+          mepr.PRPR_ID
+   FROM   FACETS.CMC_MEPR_PRIM_PROV mepr
+   WHERE  mepr.MEME_CK = me.MEME_CK
+   AND    mepr.MEPR_PCP_TYPE='MP'
+   ORDER  BY mepr.MEPR_EFF_DT DESC
+   FETCH  FIRST 1 ROW ONLY
+) mepr_x ON 1=1
+/* latest eligible product per member */
+LEFT JOIN LATERAL (
+   SELECT /*+ INDEX(mepe IDX_MEPE_MEME_EFF) */
+          mepe.PDPD_ID
+   FROM   FACETS.CMC_MEPE_PRCS_ELIG mepe
+   WHERE  mepe.MEME_CK = me.MEME_CK
+   AND    mepe.MEPE_ELIG_IND='Y'
+   AND    mepe.CSPD_CAT='M'
+   ORDER  BY mepe.MEPE_EFF_DT DESC
+   FETCH  FIRST 1 ROW ONLY
+) mepe_x ON 1=1
+LEFT JOIN FACETS.CMC_PDDS_PROD_DESC pdds
+       ON pdds.PDPD_ID = mepe_x.PDPD_ID
+/* config + customer (already limited by t) */
+LEFT JOIN FACETS.CMC_CSCF_CONF f
+       ON f.CSSC_ID=t.CSSC_ID AND f.CSTK_SEQ_NO=t.CSTK_SEQ_NO AND f.CSCF_TYPE='T'
+LEFT JOIN FACETS.CMC_CSSC_CUSTOMER cssc
+       ON cssc.CSSC_ID = t.CSSC_ID
+/* active Medicaid on call date */
+LEFT JOIN LATERAL (
+   SELECT /*+ INDEX(mecd IDX_MECD_MEME_EFF_TERM) */
+          mecd.MECD_MCTR_AIDC, TRIM(mecd.MECD_MCTR_MDCT) AS MECD_MCTR_MDCT
+   FROM   FACETS.CMC_MECD_MEDICAID mecd
+   WHERE  mecd.MEME_CK = me.MEME_CK
+   AND    t.CSTK_RECD_DT BETWEEN mecd.MECD_EFF_DT AND mecd.MECD_TERM_DT
+   ORDER  BY mecd.MECD_TERM_DT DESC
+   FETCH  FIRST 1 ROW ONLY
+) mecd_act ON 1=1
+/* fallback: most recent Medicaid */
+LEFT JOIN LATERAL (
+   SELECT /*+ INDEX(mecd IDX_MECD_MEME_TERM) */
+          mecd.MECD_MCTR_AIDC, TRIM(mecd.MECD_MCTR_MDCT) AS MECD_MCTR_MDCT
+   FROM   FACETS.CMC_MECD_MEDICAID mecd
+   WHERE  mecd.MEME_CK = me.MEME_CK
+   ORDER  BY mecd.MECD_TERM_DT DESC
+   FETCH  FIRST 1 ROW ONLY
+) mecd_last ON 1=1
+/* translations – tiny */
+LEFT JOIN lang_x   ON lang_x.MCTR_VALUE = me.MEME_MCTR_LANG
+LEFT JOIN county_x ON county_x.MCTR_VALUE = COALESCE(mecd_act.MECD_MCTR_MDCT,mecd_last.MECD_MCTR_MDCT)
+LEFT JOIN FACETS.CMC_PRPR_PROV prov ON prov.PRPR_ID = mepr_x.PRPR_ID
+/* one row per task; no DISTINCT needed */
+ORDER BY sbsp.SBSB_ID, me.MEME_SFX, t.CSTK_RECD_DT;
