@@ -1,0 +1,32 @@
+import pandas as pd
+
+# Assuming you trained: lr_model.fit(X_train, y_train)
+importance = pd.Series(lr_model.coef_, index=X_train.columns)
+importance.sort_values(ascending=False).plot(kind='bar', figsize=(10,5), title="LR Feature Importance")
+
+
+Random Forest (RF) / RF with Bootstrap / Hyperparameter RF
+
+
+importance = pd.Series(rf_model.feature_importances_, index=X_train.columns)
+importance.sort_values(ascending=False).plot(kind='bar', figsize=(10,5), title="RF Feature Importance")
+
+
+xgb hyperparameter 
+
+from xgboost import plot_importance
+
+plot_importance(xgb_model, importance_type='weight', max_num_features=15)  
+plt.title("XGBoost Feature Importance")
+plt.show()
+
+
+
+
+boosting
+
+
+importance = pd.Series(boosting_model.feature_importances_, index=X_train.columns)
+importance.sort_values(ascending=False).plot(kind='bar', figsize=(10,5), title="Boosting Feature Importance")
+
+
