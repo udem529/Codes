@@ -1,0 +1,15 @@
+import numpy as np
+
+x = np.arange(len(model_result['Model']))
+width = 0.35
+
+plt.figure(figsize=(12,6))
+plt.bar(x - width/2, model_result['Training_rmse_error'], width, label='Training RMSE')
+plt.bar(x + width/2, model_result['Testing_rmse_error'], width, label='Testing RMSE')
+
+plt.xticks(x, model_result['Model'], rotation=45, ha="right")
+plt.ylabel("RMSE Error")
+plt.title("Training vs Testing RMSE by Model")
+plt.legend()
+plt.show()
+
