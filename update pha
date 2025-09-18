@@ -1,17 +1,13 @@
-SELECT PHARM_CLM_ID,
-       TRANS_TYP_CD,
-       FIL_STS_CD_DESC,
-       GDCB,
-       GDCA
+SELECT *
 FROM (
     SELECT t.*,
-           MAX(CASE WHEN TRANS_TYP_CD IS NOT NULL THEN 1 ELSE 0 END)
-               OVER (PARTITION BY PHARM_CLM_ID) AS has_non_null,
-           ROW_NUMBER() OVER (
-               PARTITION BY PHARM_CLM_ID
-               ORDER BY CASE WHEN TRANS_TYP_CD IS NOT NULL THEN 1 ELSE 0 END DESC
-           ) AS rn
+           MAX(CASE WHEN TRANS_TYP_CD IS NOT NULL AND TRIM(TRANS_TYP_CD) <> '' 
+                    THEN 1 ELSE 0 END) 
+               OVER (PARTITION BY PHARM_CLM_ID) AS has_valid
     FROM your_table_name t
 ) sub
-WHERE rn = 1   -- pick only one best row per claim
+WHERE 
+    (has_valid = 1 AND TRANS_TYP_CD IS NOT NULL AND TRIM(TRANS_TYP_CD) <> '')   -- keep all valid rows
+    OR
+    (has_valid = 0 AND (TRANS_TYP_CD IS NULL OR TRIM(TRANS_TYP_CD) = ''))       -- else keep null/blank rows
 ORDER BY PHARM_CLM_ID;
