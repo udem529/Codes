@@ -1,0 +1,26 @@
+SELECT t.*
+FROM your_table_name t
+WHERE 
+    -- Keep rows where claim has at least one non-null TRANS_TYP_CD,
+    -- but only keep the non-null rows
+    (t.TRANS_TYP_CD IS NOT NULL
+     AND EXISTS (
+         SELECT 1 
+         FROM your_table_name x
+         WHERE x.PHARM_CLM_ID = t.PHARM_CLM_ID
+           AND x.TRANS_TYP_CD IS NOT NULL
+     )
+    )
+    OR
+    -- If claim has only null TRANS_TYP_CD, keep those null rows
+    (t.TRANS_TYP_CD IS NULL
+     AND NOT EXISTS (
+         SELECT 1
+         FROM your_table_name y
+         WHERE y.PHARM_CLM_ID = t.PHARM_CLM_ID
+           AND y.TRANS_TYP_CD IS NOT NULL
+     )
+    )
+ORDER BY 
+    PHARM_CLM_ID,
+    CASE WHEN TRANS_TYP_CD IS NULL THEN 0 ELSE 1 END;
