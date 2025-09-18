@@ -1,16 +1,17 @@
-SELECT *
+SELECT PHARM_CLM_ID,
+       TRANS_TYP_CD,
+       FIL_STS_CD_DESC,
+       GDCB,
+       GDCA
 FROM (
-    SELECT 
-        t.*,
-        -- Check if claim has any non-null TRANS_TYP_CD
-        MAX(CASE WHEN TRANS_TYP_CD IS NOT NULL THEN 1 ELSE 0 END) 
-            OVER (PARTITION BY PHARM_CLM_ID) AS has_non_null
+    SELECT t.*,
+           MAX(CASE WHEN TRANS_TYP_CD IS NOT NULL THEN 1 ELSE 0 END)
+               OVER (PARTITION BY PHARM_CLM_ID) AS has_non_null,
+           ROW_NUMBER() OVER (
+               PARTITION BY PHARM_CLM_ID
+               ORDER BY CASE WHEN TRANS_TYP_CD IS NOT NULL THEN 1 ELSE 0 END DESC
+           ) AS rn
     FROM your_table_name t
 ) sub
-WHERE 
-    (has_non_null = 1 AND TRANS_TYP_CD IS NOT NULL)   -- if claim has a non-null, keep only those rows
-    OR
-    (has_non_null = 0 AND TRANS_TYP_CD IS NULL)       -- if claim has only nulls, keep nulls
-ORDER BY 
-    PHARM_CLM_ID,
-    CASE WHEN TRANS_TYP_CD IS NULL THEN 0 ELSE 1 END;
+WHERE rn = 1   -- pick only one best row per claim
+ORDER BY PHARM_CLM_ID;
