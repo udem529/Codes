@@ -1,0 +1,10 @@
+IF CONTAINS([Escalation_Reason__c], "Regulator") 
+   OR CONTAINS([Cstk Mctr Reas.], "Regulator") 
+THEN "Regulatory Escalation"
+
+ELSEIF CONTAINS([Reason_For_Exception__c], "Legal") 
+   OR CONTAINS([Reopen_Reason__c], "Compliance") 
+THEN "Legal/Compliance Hold"
+
+ELSE "Other Cases"
+END
